@@ -1,0 +1,246 @@
+Project Proposal
+Volatility-Managed Portfolio Allocation under Tail Risk Constraints
+A GARCH-Informed CVaR Optimization Strategy
+1. Abstract
+
+Traditional portfolio allocation strategies such as the 60/40 stock-bond portfolio are simple and widely used, but they often fail to adapt to changing market conditions and may suffer large drawdowns during periods of market stress. In this project, we propose a dynamic asset allocation strategy that combines volatility forecasting and downside risk optimization.
+
+Specifically, we use GARCH-based volatility forecasting to estimate future market risk and apply Conditional Value-at-Risk (CVaR) optimization to construct portfolios that explicitly control tail risk. The strategy dynamically rebalances between equity and bond assets based on updated market conditions.
+
+We evaluate the proposed strategy using historical market data and compare it against traditional benchmark portfolios such as static 60/40 allocation and buy-and-hold strategies. Our goal is to investigate whether volatility-informed tail-risk optimization can improve risk-adjusted portfolio performance.
+
+2. Introduction
+
+Portfolio allocation is one of the most fundamental problems in quantitative finance. Traditional approaches such as mean-variance optimization, originally proposed by Harry Markowitz, focus on balancing expected return and variance. However, variance treats upside and downside volatility symmetrically and may not fully capture extreme losses during market crises.
+
+In practice, investors care more about downside protection and drawdown management. Furthermore, market volatility is time-varying and often clusters during periods of financial stress.
+
+This motivates our research question:
+
+Can a volatility-informed portfolio optimization strategy under tail-risk constraints outperform traditional static allocation strategies?
+
+To answer this question, we integrate volatility forecasting with tail-risk-aware portfolio optimization and evaluate its effectiveness through historical backtesting.
+
+3. Dataset
+
+We use daily historical ETF data representing major asset classes:
+
+Assets
+Equity
+SPDR S&P 500 ETF Trust (SPY)
+
+Represents broad U.S. equity market exposure.
+
+Bonds
+iShares 20+ Year Treasury Bond ETF (TLT)
+
+Represents long-duration U.S. Treasury exposure and acts as a defensive asset.
+
+Time Period
+2008–2025 (Daily Frequency)
+
+This period includes multiple market regimes:
+
+Global Financial Crisis
+COVID-19 market crash
+Rising interest rate environments
+
+This allows us to evaluate strategy robustness under different market conditions.
+
+Data Source
+
+Historical price data will be obtained from:
+
+Yahoo Finance
+
+We convert adjusted closing prices into log returns for modeling.
+
+4. Methodology
+4.1 Return Calculation
+
+Asset returns are computed as:
+
+r
+t
+	​
+
+=log(
+P
+t−1
+	​
+
+P
+t
+	​
+
+	​
+
+)
+
+where P
+t
+	​
+
+ is the adjusted closing price.
+
+4.2 Volatility Forecasting
+
+To capture time-varying market risk, we estimate conditional volatility using:
+
+GARCH(1,1)
+
+σ
+t
+2
+	​
+
+=ω+αϵ
+t−1
+2
+	​
+
++βσ
+t−1
+2
+	​
+
+
+This allows us to forecast short-term market volatility and identify high-risk periods.
+
+4.3 Tail Risk Measurement
+
+Instead of variance, we focus on downside risk using:
+
+Conditional Value-at-Risk (CVaR)
+
+CVaR
+α
+	​
+
+=E[R
+p
+	​
+
+∣R
+p
+	​
+
+≤VaR
+α
+	​
+
+]
+
+CVaR measures expected losses under the worst-case scenarios.
+
+4.4 Portfolio Optimization
+
+At each rebalancing date, portfolio weights are determined by solving:
+
+w
+min
+	​
+
+CVaR
+α
+	​
+
+(w)
+
+subject to:
+
+i
+∑
+	​
+
+w
+i
+	​
+
+=1
+0≤w
+i
+	​
+
+≤1
+
+Additionally, we include turnover penalties to reduce excessive trading:
+
+η∥w
+t
+	​
+
+−w
+t−1
+	​
+
+∥
+1
+	​
+
+4.5 Dynamic Rebalancing
+
+The portfolio is rebalanced monthly.
+
+At each rebalancing date:
+
+Update market data
+→ Forecast volatility
+→ Estimate CVaR
+→ Solve optimization
+→ Reallocate portfolio
+5. Backtesting Design
+Benchmark Strategies
+
+We compare our strategy against:
+
+1. Static 60/40 Portfolio
+
+60% equity + 40% bonds
+
+2. Equal Weight Portfolio
+
+50% equity + 50% bonds
+
+3. Buy-and-Hold Equity
+
+100% SPY
+
+Transaction Cost
+
+We incorporate transaction costs to make the backtest more realistic.
+
+6. Evaluation Metrics
+
+We evaluate performance using:
+
+Return Metrics
+cumulative return
+annualized return
+Risk Metrics
+volatility
+maximum drawdown
+CVaR
+Risk-Adjusted Metrics
+Sharpe ratio
+7. Expected Results
+
+We expect that:
+
+The proposed strategy reduces drawdowns during crisis periods.
+The strategy dynamically shifts from equities to bonds during high-volatility regimes.
+Risk-adjusted returns (Sharpe ratio) improve relative to static benchmark portfolios.
+8. Potential Limitations
+
+Possible limitations include:
+
+sensitivity to GARCH parameters
+dependence on historical market regimes
+estimation errors in tail-risk modeling
+9. Future Extensions
+
+Potential future work includes:
+
+multi-asset allocation
+regime-switching models
+reinforcement learning–based meta allocation

@@ -1,0 +1,104 @@
+Pair Trading with a Continuous Sizing Strategy
+Robert Yang
+Abstract
+Pairs trading is a trading strategy first used in the 1980s performed on two related1
+securities. When the spread (which can have different mathematical definitions2
+depending on the model) widens, the outperforming security is shorted and the3
+underperforming security is longed. The model effectively bets that the spread4
+between the two securities will go back down. In this paper, we simulate a pair5
+trading strategy performed on KO and PEP (Coca Cola and Pepsi) trained on data6
+from 2004 to 2013 and tested on data from 2014 to 2022.7
+1 Examination of Data8
+In this section, we will introduce some pair trading theory and test that theory on KO and PEP to see9
+if they are a good target for pair trading.10
+1.1 Cointegration test11
+Usually, pair trading is performed on securities which have a high degree of cointegration, which12
+means a linear combination of their time series is relatively stationary. A stationary time series13
+regularly goes back to or hovers around a specific value. For trading purposes, this is useful because14
+this linear combination is predictable; when it’s below the mean value, we can bet that it will15
+eventually increase and vice versa. This allows us to make money with trades because it’s easy to set16
+up our positions to profit from this: simply a long on the underperforming stock and a short on the17
+outperforming one, as is done for pair trading.18
+Surprisingly, KO and PEP do not have high cointegration (nor do their logs), as seen in the image19
+below.20
+21
+Nonetheless, we will proceeed with our pair trading test. The basis for our model is more based22
+on fundamentals, namely that Coca Cola and Pepsi are both companies that have been around for a23
+while, they’re clearly closely related, and their relationship will likely not suddenly change unlike24
+newer sectors like tech.25
+2 Training26
+We will train our model using KO and PEP data between 2003 and 2013 (inclusive). For the purposes27
+of our relatively simple model, training will just mean finding a mean and standard deviation of the28
+spread.29
+Submitted to 37th Conference on Neural Information Processing Systems (NeurIPS 2023). Do not distribute.
+First, let’s define our spread aslog a − n log b, where a and b are the stock prices of KO and PEP30
+respectively. n is a constant and we will define it to make the mean of the spread as close to zero as31
+possible. We do this in the implementation below.32
+33
+3 Testing our Strategy34
+3.1 Implementation35
+We will test our strategy using data from 2014 to 2022, inclusive. Our first strategy will create a36
+buy/sell signal when the spread crosses below a z-score of -0.7 or above 0.7, and it ends the position37
+when the spread goes back down to an absolute z-score of 0.2. Note that this z-score is based on the38
+mean and standard deviation from the training data only. Below is the exact implementation.39
+40
+2
+3.2 Results41
+Below is the graph of returns for our strategy and the total returns for all test years.42
+43
+Our strategy made less returns than longing both KO and PEP would’ve made.44
+45
+However, our strategy had a very conservative position size of $100 at all times (where a short counts46
+as a position size). Unlike longing both stocks, this doesn’t take advantage of compound growth. In47
+addition, since we always longed a stock and shorted another, the total amount of money we put in to48
+make a position was $0, so we could increase our position sizes by much more than in the long both49
+strategy.50
+Furthermore, our strategy achieved a much better Sharpe ratio, as seen below.51
+52
+Pair trading is structured to be market neutral and minimize risk, so the Sharpe ratio is a fair indicator53
+of the quality of a pair trading strategy.54
+4 Continuously Sized Position Strategy55
+In this section, we will test an alternative model, invented by the authors, that continuously sizes our56
+position based on the spread.57
+4.1 Theory58
+We make a new position at the close of each day (by trading after-hours or right before the close) and59
+our trade size will be proportional to the z-score of the spread.60
+3
+The logic here is that our spread is mean reverting, so consider what happens if the spread follows61
+a mean reversion sequence a = (0 , 0.1, 0.2, ..., 1, 0.9, 0.8, ..., 0), where each spread value is at the62
+close of each day. Then our position sizes based on day i is proportional to ai and we make money63
+if ai+1 (the close price of the next day) is lower and lose money if it’s higher (since we expect the64
+positive z-score spread to fall back to the mean). Thus, our return for the position started on day i65
+will be c(ai+1 − ai)ai for some constant c. Based on this formula and the sequence, our return will66
+be 0.1c(−0 − 0.1 − 0.2 − . . . − 0.9 + 1 + 0.9 + . . . + 0.1) = 0 .1c(1). This is equivalent to if we had67
+started our position when the spread had z-score 1 and ended it when the spread returned to the mean.68
+Note that 1 was the arbitrary maximum of the sequence, so this strategy effectively gave the same69
+return as if our previous strategy was magically able to detect when the spread time series would70
+locally peak, which is the best time to start a position.71
+The issue is the spread clearly wouldn’t follow such a nice sequence in practice, but the general idea72
+still holds: because our position size has magnitude proportional to the spread z-score of the previous73
+day, our positions will be slightly larger when the spread reverts to the mean than when the spread74
+strays away from the mean, generating a net profit.75
+4.2 Implementation and Results76
+Below is my implementation and the returns graph.77
+78
+And below is the total returns, average position size, and Sharpe ratio.79
+80
+4
+Note that this strategy had lower returns than the original strategy while having a higher average81
+position size, so the percentage return wasn’t as great. However, this strategy achieved a slightly82
+better Sharpe ratio.83
+In conclusion, this is an interesting strategy which seems like it can be optimized to perform quite84
+well. It is more difficult to execute in practice because it needs to make new positions every day,85
+however.86
+References87
+[1] Quantitative Finance & Algo Trading Blog by QuantInsti. (2023, March 16). Pairs trading basics: Correlation,88
+cointegration and strategy. Quantitative Finance & Algo Trading Blog by QuantInsti. Retrieved May 7, 2023,89
+from https://blog.quantinsti.com/pairs-trading-basics/90
+[2] KidQuant. (2021, May 5). Pairs-trading-with-python/pairstrading.ipynb at master · KidQuant/pairs-91
+trading-with-python. GitHub. Retrieved May 7, 2023, from https://github.com/KidQuant/Pairs-Trading-With-92
+Python/blob/master/PairsTrading.ipynb93
+[3] Ethan Johnson-Skinner, M. S. (2022, November 11). Creating and implementing a pairs trading strategy94
+from scratch. Medium. Retrieved May 7, 2023, from https://medium.datadriveninvestor.com/creating-and-95
+implementing-a-pairs-trading-strategy-from-scratch-658267bab24996
+5

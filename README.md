@@ -1,0 +1,56 @@
+# IEOR 198 Quantitative Finance Final Project
+
+This repository contains a complete quantitative research project for `IEOR 198: Introduction to Quantitative Finance` at UC Berkeley.
+
+## Project summary
+The project starts from a volatility-managed `SPY/TLT` allocation idea and improves it into an enhanced `SPY/TLT/GLD` strategy. The final model combines:
+- GARCH(1,1) volatility forecasting
+- CVaR-based tail-risk control
+- turnover-aware dynamic rebalancing
+- a gold defensive sleeve to improve robustness in regimes where stocks and long-duration bonds fall together
+
+The main result is that the enhanced dynamic strategy improves risk-adjusted performance relative to the original dynamic model and also beats a classic `60/40` portfolio on Sharpe ratio.
+
+## Repository structure
+- `run_final_project.py`: main backtest and output generation script
+- `build_report_pdf.py`: utility script that assembles a PDF report from generated figures
+- `final_report.tex`: LaTeX version of the final paper
+- `final_report.md`: Markdown version of the report
+- `final_report.pdf`: compiled report for sharing
+- `project_summary.md`: short project overview
+- `data/`: downloaded ETF price data used by the project
+- `outputs/`: performance tables, dynamic weights, volatility forecasts, and figures
+- `references/`: original proposal and course/project reference materials
+
+## Universe and benchmarks
+Assets:
+- `SPY`: U.S. equities
+- `TLT`: long-duration U.S. Treasuries
+- `GLD`: gold
+
+Benchmarks:
+- original dynamic `SPY/TLT`
+- static `60/40`
+- equal weight `1/3`
+- buy-and-hold `SPY`
+
+## How to run
+```bash
+python run_final_project.py
+```
+
+This script downloads price data, runs the walk-forward backtest, and refreshes all files in `outputs/`.
+
+To rebuild the companion PDF from the generated content:
+```bash
+python build_report_pdf.py
+```
+
+## Main deliverables
+- `final_report.tex`
+- `final_report.pdf`
+- `outputs/performance_metrics.csv`
+- `outputs/crisis_metrics.csv`
+- `outputs/equity_curves.png`
+- `outputs/enhanced_dynamic_weights.png`
+- `outputs/enhanced_forecast_volatility.png`

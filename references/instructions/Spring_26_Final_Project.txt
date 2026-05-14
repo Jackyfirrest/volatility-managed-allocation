@@ -1,0 +1,57 @@
+ University of California, Berkeley  
+Department of Industrial Engineering and Operations Research  
+IEOR 198: Introduction to Quantitative Finance  
+Spring 26: Final Project  
+Outline  
+Over the course of the semester, we will cover a wide range of topics from basic economics to 
+core machine learning concepts. We hope that this course will serve as a solid foundation for 
+your future interest in Quantitative Finance.  
+This final project will be your chance to delve deeper into a topic you found intriguing or test 
+your own strategy! For example, you can look further into trading concepts like fair values and 
+bet-sizing and research topics like statistical arbitrage and feature engineering to come up with a 
+strategy and test it using skills you learned in lab 1. Expect to put in around 3-6 hours for the 
+project.  
+You can form groups of 1-4 and devise a strategy or a model from a topic of your choice. We will 
+not designate specific topics as we encourage students to pursue their own interests and 
+research more about the field.  
+Examples: Multifactor Model, Statistical Arbitrage, Asset Valuation, Portfolio Optimization, Pairs 
+Trading, etc  
+Guideline  
+For strategies, you have three choices.  
+1. Implement an academic paper 
+2. Implement an existing well-known strategy with your own twist.  
+3. Model your own strategy  
+ 
+Traditionally, final projects were done via a Python notebook to implement a strategy and 
+backtest it, and we still recommend this for the best experience, but recently we have broadened 
+the definition of strategy. Some strategies are less able to be tested in a Python notebook, so 
+you’re also allowed to do further research on a quant finance topic online or in a book and report 
+what you learned in a slideshow or paper. 
+For a backtest-able strategy, it should ideally perform better than the index in terms of returns 
+or Sharpe ratio, and it should be tested and validated with an out-of-sample testing set.  
+However, note that finding out that an idea or implementation doesn’t work is a completely 
+valid result. Research often leads to dead ends and we do not encourage you to p-hack or 
+otherwise manipulate your experiment to manufacture a ‘significant’ result.  
+You can choose any trading frequency: intra-day, daily, quarterly, etc  
+Outline  
+Below is a suggested structure for your final project:  
+1. Abstract  
+2. Introduction  
+3. Dataset  
+4. Methods (modeling)  
+5. Results  
+6. Conclusion  
+Format 
+Each group can choose to either write a 3 or more page paper or record an  4-10 minute 
+presentation detailing the results of the project. If you choose the  paper, you can follow the 
+outline listed above . If you choose t he presentation, you can make it with google slides with 
+detailed explanations of their project from beginning to end  or submit a paper detailing the 
+project.  
+Questions to consider:  
+- Presentation  
+- Did you cover your progress from beginning to end?  
+- Did you intuitively explain the models?  
+- Are there sufficient examples for people to follow?  
+- iPython Notebook/Paper 
+- Does it have an Abstract, Introduction, Body, and Conclusion?  
+- Are the graphs and diagrams labeled?  
