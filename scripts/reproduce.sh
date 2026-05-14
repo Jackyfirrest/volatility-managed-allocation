@@ -25,7 +25,7 @@ python -m pip install -r requirements.txt
 
 python run_final_project.py
 python run_drl_extension.py
-python build_report_pdf.py
+python report/build_report_pdf.py
 
 echo
 echo "Reproduction complete."
@@ -37,4 +37,4 @@ echo "  - outputs/enhanced_dynamic_weights.png"
 echo "  - outputs/enhanced_forecast_volatility.png"
 echo "  - outputs/drl_performance_metrics.csv"
 echo "  - outputs/drl_equity_curves.png"
-echo "  - final_report.pdf"
+echo "  - report/final_report.pdf"

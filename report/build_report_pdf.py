@@ -12,9 +12,10 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 
 
-PROJECT_ROOT = Path(__file__).resolve().parent
+REPORT_DIR = Path(__file__).resolve().parent
+PROJECT_ROOT = REPORT_DIR.parent
 OUTPUT_DIR = PROJECT_ROOT / "outputs"
-PDF_PATH = PROJECT_ROOT / "final_report.pdf"
+PDF_PATH = REPORT_DIR / "final_report.pdf"
 
 
 def add_text_page(pdf: PdfPages, title: str, paragraphs: list[str]) -> None:

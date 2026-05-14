@@ -16,11 +16,11 @@ The repository also includes a PPO-based DRL extension. In a strict 2021-2024 ou
 ## Repository structure
 - `run_final_project.py`: main backtest and output generation script
 - `run_drl_extension.py`: PPO-based DRL asset allocation extension
-- `build_report_pdf.py`: utility script that assembles a PDF report from generated figures
+- `report/build_report_pdf.py`: utility script that assembles a PDF report from generated figures
 - `scripts/reproduce.sh`: one-command bash workflow for rebuilding the project
 - `requirements.txt`: Python dependencies for reproduction
-- `final_report.tex`: LaTeX version of the final paper
-- `final_report.pdf`: compiled report for sharing
+- `report/final_report.tex`: LaTeX version of the final paper
+- `report/final_report.pdf`: compiled report for sharing
 - `data/`: downloaded ETF price data used by the project
 - `outputs/`: performance tables, dynamic weights, volatility forecasts, and figures
 - `references/`: original proposal and course project PDFs
@@ -56,12 +56,12 @@ This script:
 python -m pip install -r requirements.txt
 python run_final_project.py
 python run_drl_extension.py
-python build_report_pdf.py
+python report/build_report_pdf.py
 ```
 
 ## Main deliverables
-- `final_report.tex`
-- `final_report.pdf`
+- `report/final_report.tex`
+- `report/final_report.pdf`
 - `outputs/performance_metrics.csv`
 - `outputs/crisis_metrics.csv`
 - `outputs/equity_curves.png`
