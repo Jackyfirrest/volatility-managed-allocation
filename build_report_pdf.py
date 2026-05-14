@@ -52,7 +52,6 @@ def main() -> None:
             pdf,
             "Enhanced Volatility-Managed Allocation with GARCH, CVaR, and a Gold Defensive Sleeve",
             [
-                "Author: Chun-Kai Hsu | Student ID: 3040748636 | M.A. Statistics | UC Berkeley",
                 "Abstract: This project extends an original SPY/TLT volatility-managed allocation strategy by adding GLD as a third defensive asset. The final model uses monthly walk-forward rebalancing, GARCH(1,1) volatility forecasts, and CVaR-aware optimization to allocate across SPY, TLT, and GLD.",
                 "Key idea: The original SPY/TLT proposal was vulnerable when stocks and long-duration Treasuries sold off together. Adding gold improves the robustness of the defensive sleeve and leads to better risk-adjusted performance.",
                 "Headline result: The enhanced SPY/TLT/GLD strategy improves Sharpe ratio from 0.889 to 0.991, cuts max drawdown from -28.27% to -22.67%, and lowers monthly CVaR 95% from 5.70% to 4.63% relative to the original dynamic model.",
@@ -72,9 +71,22 @@ def main() -> None:
             ],
         )
 
+        add_text_page(
+            pdf,
+            "DRL Extension",
+            [
+                "The repository also includes a PPO-based deep reinforcement learning extension for monthly asset allocation across SPY, TLT, and GLD.",
+                "State design: trailing multi-horizon returns, realized volatilities, one-month GARCH forecasts, rolling correlations, and previous portfolio weights.",
+                "Action design: a continuous three-asset weight vector normalized to sum to one, with the same long-only and SPY allocation constraints used in the rule-based baseline.",
+                "Reward design: realized portfolio return minus volatility and turnover penalties.",
+                "Result summary: In the strict 2021-2024 out-of-sample test window, the DRL policy produced stronger return and Sharpe ratio than the rule-based baselines, but its tail risk remained worse than the enhanced GARCH-CVaR allocator. This makes the DRL result promising, but not yet a full replacement for the more interpretable baseline.",
+            ],
+        )
+
         add_image_page(pdf, "Equity Curves", OUTPUT_DIR / "equity_curves.png")
         add_image_page(pdf, "Enhanced Dynamic Weights", OUTPUT_DIR / "enhanced_dynamic_weights.png")
         add_image_page(pdf, "Enhanced Forecast Volatility", OUTPUT_DIR / "enhanced_forecast_volatility.png")
+        add_image_page(pdf, "DRL Equity Curves", OUTPUT_DIR / "drl_equity_curves.png")
 
 
 if __name__ == "__main__":

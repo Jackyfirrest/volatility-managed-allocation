@@ -36,11 +36,8 @@
 
 \title{Enhanced Volatility-Managed Allocation with GARCH, CVaR, and a Gold Defensive Sleeve}
 \author{
-Chun-Kai Hsu \\
-\normalsize Student ID: 3040748636 \\
-\normalsize M.A. Statistics \\
 \normalsize IEOR 198: Introduction to Quantitative Finance \\
-\normalsize University of California, Berkeley
+\normalsize Final Project
 }
 \date{Spring 2026}
 
@@ -313,7 +310,7 @@ Buy and Hold SPY (Test) & 0.6598 & 0.1350 & 0.1610 & 0.8387 & -0.2393 & 0.0876 \
 \end{tabular}
 \end{table}
 
-This preliminary DRL result is encouraging but should be interpreted cautiously. On the validation window, the PPO agent appears extremely strong, which is a warning sign that the model may be overfitting to the training and validation regime. On the strict out-of-sample 2021--2024 test window, the agent produces much stronger return and Sharpe ratio than both the original and enhanced rule-based allocators, but its tail risk remains materially worse than the enhanced GARCH-CVaR baseline. In particular, the DRL test CVaR of 7.85\% is substantially higher than the enhanced baseline's 5.15\%, even though the DRL Sharpe ratio is higher.
+This preliminary DRL result is encouraging but should be interpreted cautiously. The PPO agent delivers much stronger return and Sharpe ratio than both the original and enhanced rule-based allocators on the strict out-of-sample 2021--2024 test window, but its tail risk remains materially worse than the enhanced GARCH-CVaR baseline. In particular, the DRL test CVaR of 7.85\% is substantially higher than the enhanced baseline's 5.15\%, even though the DRL Sharpe ratio is higher.
 
 The key lesson is therefore nuanced: DRL can indeed be used for asset allocation, and even a simple PPO prototype can learn a nontrivial rebalancing policy with strong out-of-sample return performance. However, the current experiment still does not justify fully replacing the enhanced GARCH-CVaR strategy. The baseline remains more conservative, more interpretable, and more robust in terms of tail-risk control. A more serious DRL study would need stronger regularization, more careful hyperparameter tuning, and repeated walk-forward retraining before claiming superiority over the baseline.
 
