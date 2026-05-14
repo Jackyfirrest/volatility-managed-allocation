@@ -235,6 +235,21 @@ def save_drl_plot(results: pd.DataFrame) -> None:
     plt.close()
 
 
+def save_drl_weights_plot(weights: pd.DataFrame) -> None:
+    plt.figure(figsize=(11, 5))
+    for asset in ASSETS:
+        plt.plot(weights.index, weights[asset], label=f"{asset} weight", linewidth=2)
+    plt.title("DRL PPO Test Weights Over Time")
+    plt.xlabel("Date")
+    plt.ylabel("Weight")
+    plt.ylim(0.0, 1.0)
+    plt.legend()
+    plt.grid(alpha=0.25)
+    plt.tight_layout()
+    plt.savefig(OUTPUT_DIR / "drl_test_weights.png", dpi=200)
+    plt.close()
+
+
 def load_baseline_test_series(start: str, end: str) -> Dict[str, pd.Series]:
     monthly_results = pd.read_csv(OUTPUT_DIR / "monthly_returns.csv", index_col=0, parse_dates=True)
     test_window = monthly_results.loc[start:end].copy()
@@ -295,6 +310,7 @@ def main() -> None:
     metrics.to_csv(OUTPUT_DIR / "drl_performance_metrics.csv")
     comparison_metrics.to_csv(OUTPUT_DIR / "drl_vs_baseline_metrics.csv")
     save_drl_plot(results.dropna())
+    save_drl_weights_plot(test_rollout.weights)
 
     print("\nDRL extension metrics:")
     print(metrics.round(4))
