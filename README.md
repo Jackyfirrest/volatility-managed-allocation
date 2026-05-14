@@ -14,13 +14,13 @@ The main result is that the enhanced dynamic strategy improves risk-adjusted per
 ## Repository structure
 - `run_final_project.py`: main backtest and output generation script
 - `build_report_pdf.py`: utility script that assembles a PDF report from generated figures
+- `scripts/reproduce.sh`: one-command bash workflow for rebuilding the project
+- `requirements.txt`: Python dependencies for reproduction
 - `final_report.tex`: LaTeX version of the final paper
-- `final_report.md`: Markdown version of the report
 - `final_report.pdf`: compiled report for sharing
-- `project_summary.md`: short project overview
 - `data/`: downloaded ETF price data used by the project
 - `outputs/`: performance tables, dynamic weights, volatility forecasts, and figures
-- `references/`: original proposal and course/project reference materials
+- `references/`: original proposal and course project PDFs
 
 ## Universe and benchmarks
 Assets:
@@ -34,15 +34,23 @@ Benchmarks:
 - equal weight `1/3`
 - buy-and-hold `SPY`
 
-## How to run
+## Reproduce
+The fastest way to reproduce the project from a Unix-like shell is:
+
 ```bash
-python run_final_project.py
+bash scripts/reproduce.sh
 ```
 
-This script downloads price data, runs the walk-forward backtest, and refreshes all files in `outputs/`.
+This script:
+- creates a local virtual environment in `.venv/`
+- installs the required Python packages
+- reruns the full backtest
+- regenerates the companion PDF report
 
-To rebuild the companion PDF from the generated content:
+## Manual run
 ```bash
+python -m pip install -r requirements.txt
+python run_final_project.py
 python build_report_pdf.py
 ```
 

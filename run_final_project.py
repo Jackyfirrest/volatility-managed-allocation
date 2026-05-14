@@ -46,6 +46,19 @@ def ensure_directories() -> None:
         path.mkdir(parents=True, exist_ok=True)
 
 
+def cleanup_legacy_artifacts() -> None:
+    legacy_paths = [
+        DATA_DIR / "expanded_close.csv",
+        OUTPUT_DIR / "dynamic_realized_weights.csv",
+        OUTPUT_DIR / "dynamic_targets.csv",
+        OUTPUT_DIR / "dynamic_weights.png",
+        OUTPUT_DIR / "forecast_volatility.png",
+    ]
+    for path in legacy_paths:
+        if path.exists():
+            path.unlink()
+
+
 def download_prices() -> pd.DataFrame:
     yf.set_tz_cache_location(str(CACHE_DIR.resolve()))
     raw = yf.download(
@@ -419,6 +432,7 @@ portfolio construction to dynamically allocate across SPY, TLT, and GLD.
 
 def main() -> None:
     ensure_directories()
+    cleanup_legacy_artifacts()
     prices = download_prices()
     log_returns = np.log(prices / prices.shift(1)).dropna()
     rebalance_dates = month_end_index(prices)
