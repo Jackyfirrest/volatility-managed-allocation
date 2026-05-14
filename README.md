@@ -11,8 +11,11 @@ The project starts from a volatility-managed `SPY/TLT` allocation idea and impro
 
 The main result is that the enhanced dynamic strategy improves risk-adjusted performance relative to the original dynamic model and also beats a classic `60/40` portfolio on Sharpe ratio.
 
+The repository also includes a PPO-based DRL extension. In a strict 2021-2024 out-of-sample test, the DRL policy generates stronger return and Sharpe ratio than the static baselines and the rule-based allocators, but it still exhibits materially worse tail risk than the enhanced GARCH-CVaR portfolio.
+
 ## Repository structure
 - `run_final_project.py`: main backtest and output generation script
+- `run_drl_extension.py`: PPO-based DRL asset allocation extension
 - `build_report_pdf.py`: utility script that assembles a PDF report from generated figures
 - `scripts/reproduce.sh`: one-command bash workflow for rebuilding the project
 - `requirements.txt`: Python dependencies for reproduction
@@ -44,13 +47,15 @@ bash scripts/reproduce.sh
 This script:
 - creates a local virtual environment in `.venv/`
 - installs the required Python packages
-- reruns the full backtest
+- reruns the full baseline backtest
+- trains and evaluates the PPO-based DRL extension
 - regenerates the companion PDF report
 
 ## Manual run
 ```bash
 python -m pip install -r requirements.txt
 python run_final_project.py
+python run_drl_extension.py
 python build_report_pdf.py
 ```
 
@@ -62,3 +67,6 @@ python build_report_pdf.py
 - `outputs/equity_curves.png`
 - `outputs/enhanced_dynamic_weights.png`
 - `outputs/enhanced_forecast_volatility.png`
+- `outputs/drl_performance_metrics.csv`
+- `outputs/drl_vs_baseline_metrics.csv`
+- `outputs/drl_equity_curves.png`

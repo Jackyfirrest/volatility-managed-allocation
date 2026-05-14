@@ -230,6 +230,93 @@ In short, the main lesson is that dynamic risk management works better when pair
     \item Yahoo Finance data is convenient for research but not institutional-grade.
 \end{itemize}
 
-Future extensions include adding shorter-duration Treasury exposure such as IEF or SHY, using macro features for expected return estimation, introducing regime classification before optimization, and exploring reinforcement learning only after the state space and reward design are clearly defined.
+\subsection{DRL asset allocation extension}
+A natural extension of this project is to replace the hand-designed monthly scoring rule with a deep reinforcement learning (DRL) policy. This is appealing because portfolio allocation is inherently a sequential decision problem: at each rebalance date, the agent observes the market state, chooses a vector of asset weights, receives a reward based on realized portfolio performance, and then updates its policy over time.
+
+In the context of this project, a defensible DRL formulation would keep the same asset universe and transaction-cost assumptions while changing only the decision rule.
+
+\textbf{State.} The state vector at each month-end could include:
+\begin{itemize}
+    \item trailing 1-, 3-, 6-, and 12-month returns for SPY, TLT, and GLD
+    \item GARCH forecast volatilities for each asset
+    \item rolling correlations across the asset set
+    \item current drawdown and recent portfolio volatility
+    \item previous portfolio weights
+\end{itemize}
+
+\textbf{Action.} The action would be a continuous weight vector
+\[
+a_t = (w^{SPY}_t, w^{TLT}_t, w^{GLD}_t)
+\]
+subject to long-only and budget constraints:
+\[
+w^{SPY}_t + w^{TLT}_t + w^{GLD}_t = 1, \qquad w^i_t \ge 0.
+\]
+A practical implementation would still keep the SPY weight between 10\% and 90\% for consistency with the baseline strategy.
+
+\textbf{Reward.} The reward should balance return and risk rather than using raw return alone. One reasonable monthly reward is
+\[
+r_t = R_{p,t} - \eta \cdot \widehat{\sigma}_{p,t} - \lambda \cdot \text{DrawdownPenalty}_t - \kappa \cdot \text{Turnover}_t,
+\]
+where \(R_{p,t}\) is realized portfolio return, \(\widehat{\sigma}_{p,t}\) is realized or forecast portfolio volatility, DrawdownPenalty discourages large losses, and Turnover penalizes excessive rebalancing. A stronger extension would also include a CVaR-style penalty in the reward so that the DRL agent explicitly internalizes tail risk.
+
+\textbf{Model choice.} Because the action is continuous, suitable algorithms include PPO, DDPG, TD3, or SAC. Among these, PPO or SAC would be the most natural candidates for a student project because they are relatively standard, widely documented, and easier to explain than a highly customized RL architecture.
+
+\textbf{Training and evaluation design.} To make the DRL comparison credible, the training protocol should mirror the logic of the current walk-forward backtest:
+\begin{itemize}
+    \item train on an early window, such as 2008--2017
+    \item validate hyperparameters on a middle window, such as 2018--2020
+    \item test strictly out of sample on 2021--2024
+\end{itemize}
+The DRL strategy should then be evaluated against the enhanced GARCH-CVaR baseline using the same metrics in this paper: annualized return, annualized volatility, Sharpe ratio, maximum drawdown, and CVaR.
+
+\textbf{Why this extension is interesting.} The current model chooses weights with a one-step score function, while a DRL policy can learn a multi-period rebalancing rule directly. In principle, that allows the agent to account for path dependence, transaction-cost dynamics, and changing cross-asset structure without manually specifying a closed-form objective at every step.
+
+\textbf{Why this extension is difficult.} In finance, DRL often suffers from limited data, unstable training, and overfitting. For that reason, the present GARCH-CVaR allocator remains a strong baseline: it is transparent, financially interpretable, and robust enough to benchmark a more complex learning-based policy. The most reasonable research path is therefore not to replace the current model immediately, but to use it as the benchmark that a DRL allocator must beat out of sample.
+
+\subsection{Preliminary DRL experiment}
+To make the DRL discussion concrete, I implemented a preliminary PPO-based asset allocation prototype on the same SPY/TLT/GLD universe. The DRL agent rebalances monthly and observes a state vector containing:
+\begin{itemize}
+    \item trailing 1-, 3-, 6-, and 12-month returns for each asset
+    \item trailing 3-, 6-, and 12-month realized volatilities
+    \item one-month GARCH volatility forecasts
+    \item rolling 12-month cross-asset correlations
+    \item previous portfolio weights
+\end{itemize}
+
+The action is a continuous three-asset weight vector that is normalized to sum to one, with the same 10\% to 90\% SPY constraint used in the baseline model. The monthly reward is defined as realized portfolio return minus a volatility penalty and turnover penalty, so the agent is trained to balance performance and trading frictions rather than simply maximize raw return.
+
+For a first experiment, I used:
+\begin{itemize}
+    \item training window: 2011--2017
+    \item validation window: 2018--2020
+    \item strict out-of-sample test window: 2021--2024
+\end{itemize}
+
+The resulting performance is summarized below.
+
+\begin{table}[H]
+\centering
+\caption{Preliminary DRL extension results}
+\small
+\begin{tabular}{>{\raggedright\arraybackslash}p{4.6cm}rrrrrr}
+\toprule
+Strategy & Cum. Ret. & Ann. Ret. & Ann. Vol. & Sharpe & Max DD & CVaR 95\% \\
+\midrule
+DRL PPO (Test) & 1.4703 & 0.2537 & 0.1530 & 1.6578 & -0.1896 & 0.0785 \\
+Original Dynamic SPY/TLT (Test) & 0.0644 & 0.0157 & 0.1390 & 0.1131 & -0.2827 & 0.0765 \\
+Enhanced Dynamic SPY/TLT/GLD (Test) & 0.1918 & 0.0448 & 0.1161 & 0.3862 & -0.2205 & 0.0515 \\
+Equal Weight 1/3 (Test) & 0.1387 & 0.0330 & 0.1198 & 0.2756 & -0.2124 & 0.0646 \\
+Static 60/40 (Test) & 0.1314 & 0.0313 & 0.1449 & 0.2164 & -0.2623 & 0.0797 \\
+Buy and Hold SPY (Test) & 0.6598 & 0.1350 & 0.1610 & 0.8387 & -0.2393 & 0.0876 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+This preliminary DRL result is encouraging but should be interpreted cautiously. On the validation window, the PPO agent appears extremely strong, which is a warning sign that the model may be overfitting to the training and validation regime. On the strict out-of-sample 2021--2024 test window, the agent produces much stronger return and Sharpe ratio than both the original and enhanced rule-based allocators, but its tail risk remains materially worse than the enhanced GARCH-CVaR baseline. In particular, the DRL test CVaR of 7.85\% is substantially higher than the enhanced baseline's 5.15\%, even though the DRL Sharpe ratio is higher.
+
+The key lesson is therefore nuanced: DRL can indeed be used for asset allocation, and even a simple PPO prototype can learn a nontrivial rebalancing policy with strong out-of-sample return performance. However, the current experiment still does not justify fully replacing the enhanced GARCH-CVaR strategy. The baseline remains more conservative, more interpretable, and more robust in terms of tail-risk control. A more serious DRL study would need stronger regularization, more careful hyperparameter tuning, and repeated walk-forward retraining before claiming superiority over the baseline.
+
+Beyond DRL, future extensions include adding shorter-duration Treasury exposure such as IEF or SHY, using macro features for expected return estimation, and introducing regime classification before optimization.
 
 \end{document}
